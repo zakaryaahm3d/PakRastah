@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% block title %}Circular Marketplace{% endblock %}
+{% block content %}
+
+<div class="mb-6 flex items-start justify-between">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-100">Circular Marketplace</h1>
+    <p class="text-gray-500 text-sm mt-1">Buy and sell second-hand goods — keeping items out of landfill.</p>
+  </div>
+  {% if role == 'citizen' %}
+  <div class="flex items-center gap-3">
+    <a href="{{ url_for('stubs.wallet') }}"
+       class="text-sm text-emerald-400 border border-emerald-700/50 bg-emerald-500/10 hover:bg-emerald-500/15
+              px-4 py-2 rounded-lg font-medium transition">
+      Wallet: PKR {{ '{:,.0f}'.format(wallet_balance) }}
+    </a>
+    <a href="{{ url_for('stubs.new_listing_form') }}"
+       class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+      + Sell an Item
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+<div class="grid grid-cols-3 gap-4 mb-6">
+
+  <div class="bg-[#151929] rounded-xl border border-gray-800 p-5 flex items-center justify-between">
+    <div>
+      <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Active Listings</p>
+      <p class="text-3xl font-bold text-sky-400 mt-1">{{ stats.active }}</p>
+    </div>
+    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center flex-shrink-0">
+      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="bg-[#151929] rounded-xl border border-gray-800 p-5 flex items-center justify-between">
+    <div>
+      <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Items Sold</p>
+      <p class="text-3xl font-bold text-emerald-400 mt-1">{{ stats.sold }}</p>
+    </div>
+    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center flex-shrink-0">
+      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="bg-[#151929] rounded-xl border border-gray-800 p-5 flex items-center justify-between">
+    <div>
+      <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Active Market Value</p>
+      <p class="text-xl font-bold text-gray-200 mt-1">PKR {{ '{:,.0f}'.format(stats.active_value_pkr) }}</p>
+    </div>
+    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center flex-shrink-0">
+      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+  </div>
+
+</div>
+
+{# ── MY LISTINGS ── #}
+{% if role == 'citizen' and my_listings %}
+<div class="mb-8">
+  <h2 class="text-base font-semibold text-gray-300 mb-3">My Listings</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for item in my_listings %}
+    <div id="listing-{{ item.listing_id }}"
+         class="bg-[#151929] rounded-xl border-2 border-emerald-700/40 p-5 flex flex-col">
+      {% include 'stubs/_listing_body.html' %}
+      {% if item.status == 'active' %}
+      <form action="{{ url_for('stubs.remove_listing', listing_id=item.listing_id) }}"
+            method="post"
+            hx-post="{{ url_for('stubs.remove_listing', listing_id=item.listing_id) }}"
+            hx-target="#listing-{{ item.listing_id }}"
+            hx-swap="outerHTML"
+            class="mt-auto pt-3 border-t border-gray-800">
+        <button type="submit"
+                onclick="return confirm('Remove this listing?')"
+                class="w-full text-red-400 hover:text-red-300 text-xs font-medium py-1.5
+                       rounded border border-red-700/40 hover:border-red-600/60 transition">
+          Remove Listing
+        </button>
+      </form>
+      {% elif item.status == 'sold' %}
+      <p class="mt-auto pt-3 border-t border-gray-800 text-xs text-center text-gray-600">
+        Sold to {{ item.buyer_name or 'a buyer' }}
+      </p>
+      {% else %}
+      <p class="mt-auto pt-3 border-t border-gray-800 text-xs text-center text-gray-700">Removed</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{# ── MY PURCHASES ── #}
+{% if role == 'citizen' and my_purchases %}
+<div class="mb-8">
+  <h2 class="text-base font-semibold text-gray-300 mb-3">My Purchases</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for item in my_purchases %}
+    <div class="bg-emerald-500/8 border border-emerald-700/30 rounded-xl p-5 flex flex-col">
+      {% include 'stubs/_listing_body.html' %}
+      <p class="mt-auto pt-3 border-t border-emerald-800/40 text-xs text-emerald-500">
+        Purchased {{ item.bought_at.strftime('%d %b %Y') if item.bought_at else '' }}
+        · PKR {{ '{:,.0f}'.format(item.price_pkr) }} paid
+      </p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{# ── AVAILABLE LISTINGS ── #}
+<h2 class="text-base font-semibold text-gray-300 mb-3">
+  Available Items
+  <span class="text-gray-600 font-normal text-sm">({{ active_listings | length }})</span>
+</h2>
+
+{% if active_listings %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  {% for item in active_listings %}
+  {% set own = (role == 'citizen' and item.seller_id == viewer_id) %}
+  {% set can_afford = (role != 'citizen' or wallet_balance >= item.price_pkr) %}
+
+  <div id="listing-{{ item.listing_id }}"
+       class="bg-[#151929] rounded-xl border border-gray-800 p-5 flex flex-col
+              {% if own %}opacity-50{% endif %}">
+    {% include 'stubs/_listing_body.html' %}
+
+    <div class="mt-auto pt-3 border-t border-gray-800">
+      {% if own %}
+        <p class="text-xs text-center text-gray-600">Your listing</p>
+      {% elif role == 'citizen' %}
+        {% if can_afford %}
+        <form action="{{ url_for('stubs.buy_listing', listing_id=item.listing_id) }}"
+              method="post"
+              hx-post="{{ url_for('stubs.buy_listing', listing_id=item.listing_id) }}"
+              hx-target="#listing-{{ item.listing_id }}"
+              hx-swap="outerHTML">
+          <button type="submit"
+                  class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm
+                         font-semibold py-2 rounded-lg transition">
+            Buy — PKR {{ '{:,.0f}'.format(item.price_pkr) }}
+          </button>
+        </form>
+        {% else %}
+        <div class="text-center">
+          <p class="text-xs text-red-400 font-medium">Insufficient balance</p>
+          <a href="{{ url_for('stubs.wallet') }}"
+             class="text-xs text-emerald-400 hover:underline">Top up wallet →</a>
+        </div>
+        {% endif %}
+      {% else %}
+        <p class="text-xs text-center text-gray-600">Browse only</p>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="bg-[#151929] rounded-xl border border-gray-800 p-12 text-center text-gray-600">
+  No active listings right now.
+  {% if role == 'citizen' %}
+  <a href="{{ url_for('stubs.new_listing_form') }}" class="text-emerald-400 hover:underline ml-1">List something!</a>
+  {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

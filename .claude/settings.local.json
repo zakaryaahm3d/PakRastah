@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash scripts/reset_demo.sh)",
+      "Bash(python -c \"import psycopg2; print\\('ok'\\)\")",
+      "Bash(python3 -c \"import psycopg2; print\\('ok'\\)\")",
+      "Bash(python run.py)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5000/login)",
+      "PowerShell(cd \"C:\\\\Users\\\\green\\\\Projects\\\\PakRastah\"; $env:FLASK_DEBUG = \"1\"; Start-Process python -ArgumentList \"run.py\" -NoNewWindow)",
+      "Bash(kill %1)",
+      "Bash(wait)",
+      "Bash(python -c \"import flask, werkzeug; print\\('Flask', flask.__version__\\); print\\('Werkzeug', werkzeug.__version__\\)\")",
+      "Bash(python -c \"import importlib.metadata; print\\('Flask', importlib.metadata.version\\('flask'\\)\\); print\\('Werkzeug', importlib.metadata.version\\('werkzeug'\\)\\)\")",
+      "Bash(python *)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill /PID 19288 /F)",
+      "Bash(taskkill /PID 35668 /F)",
+      "Bash(taskkill /PID 39352 /F)",
+      "Bash(taskkill /PID 5896 /F)",
+      "PowerShell(Stop-Process *)",
+      "PowerShell(netstat *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{redirect_url}\" http://127.0.0.1:5000/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:5000/login)"
+    ]
+  }
+}

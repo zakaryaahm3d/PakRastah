@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Log Waste Pickup{% endblock %}
+{% block content %}
+
+<div class="max-w-lg mx-auto">
+  <div class="mb-6">
+    <a href="{{ url_for('business.dashboard') }}" class="text-sm text-emerald-400 hover:underline">← Back to dashboard</a>
+    <h1 class="text-2xl font-bold text-gray-100 mt-2">Log Waste Pickup</h1>
+    <p class="text-gray-500 text-sm mt-1">
+      Submitting this event triggers a diversion ratio recalculation for your business.
+    </p>
+  </div>
+
+  <div class="bg-[#151929] rounded-xl border border-gray-800 p-6">
+    <form method="post" action="{{ url_for('business.create_event') }}" class="space-y-5">
+
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">Event Date</label>
+        <input type="date" name="event_date" required
+               value="{{ today }}"
+               max="{{ today }}"
+               class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
+                      focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">Waste Type</label>
+        <select name="waste_type" required
+                class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
+                       focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          <option value="" class="bg-[#0f1222]">Select type…</option>
+          {% for t in ['organic','recyclable','textile','hazardous','general','mixed'] %}
+          <option value="{{ t }}" class="bg-[#0f1222]">{{ t|capitalize }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">
+          Tonnage <span class="text-gray-600 font-normal">(kg)</span>
+        </label>
+        <input type="number" name="tonnage" required min="0.001" step="0.001"
+               placeholder="e.g. 350.5"
+               class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
+                      placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        <p class="text-xs text-gray-600 mt-1">Enter the total weight of waste collected in kilograms.</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">Processing Facility</label>
+        <select name="facility_id"
+                class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
+                       focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          <option value="" class="bg-[#0f1222]">— Not yet assigned —</option>
+          {% for f in facilities %}
+          <option value="{{ f.facility_id }}" class="bg-[#0f1222]">{{ f.name }} ({{ f.city }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">Notes <span class="text-gray-600 font-normal">(optional)</span></label>
+        <textarea name="notes" rows="2" placeholder="Batch description, special handling notes…"
+                  class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
+                         placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+      </div>
+
+      <div class="pt-2 flex gap-3">
+        <button type="submit"
+                class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold
+                       py-2.5 rounded-lg text-sm transition">
+          Submit Event
+        </button>
+        <a href="{{ url_for('business.dashboard') }}"
+           class="flex-1 text-center border border-gray-700 text-gray-400 hover:bg-gray-800
+                  font-medium py-2.5 rounded-lg text-sm transition">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <div class="mt-4 bg-emerald-500/8 border border-emerald-700/40 rounded-lg p-4 text-xs text-emerald-400">
+    <strong>How triggers work:</strong> After this form submits, Trigger 1
+    (<code class="bg-[#0f1222] px-1 rounded">trg_waste_events_metrics</code>) fires and recomputes your 90-day diversion ratio.
+    If the ratio crosses 60%, Trigger 2 (<code class="bg-[#0f1222] px-1 rounded">trg_business_metrics_certification</code>)
+    automatically queues your business for certification review.
+  </div>
+</div>
+
+<script>
+  document.querySelector('[name="event_date"]').value = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}

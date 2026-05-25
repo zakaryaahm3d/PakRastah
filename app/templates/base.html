@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}PakRastah{% endblock %} — Waste Management Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-SKyTFkHLkpFoIGGcmB3JkCMJWCKNAoNpDTv39ETdMBRGAdOXoFHAlMgJIzOJNKI" crossorigin="anonymous"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { DEFAULT: '#10b981', dark: '#059669' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    #sidebar { width: 240px; transition: width 0.22s cubic-bezier(.4,0,.2,1); }
+    #sidebar.collapsed { width: 72px; }
+    #sidebar.collapsed .nav-label,
+    #sidebar.collapsed .logo-text,
+    #sidebar.collapsed .user-text { display: none; }
+    #main-content { margin-left: 240px; transition: margin-left 0.22s cubic-bezier(.4,0,.2,1); }
+    #main-content.expanded { margin-left: 72px; }
+    .nav-item { min-width: 0; }
+    * { box-sizing: border-box; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-[#0b0d1a] min-h-screen font-sans text-gray-200">
+
+{% if session.user_id %}
+{% set role = session.get('role') %}
+
+<!-- ── Sidebar ── -->
+<aside id="sidebar"
+       class="fixed top-0 left-0 h-full bg-[#0f1222] border-r border-gray-800 flex flex-col z-30 overflow-hidden">
+
+  <!-- Logo row -->
+  <div class="flex items-center justify-between px-4 h-16 border-b border-gray-800 flex-shrink-0">
+    <div class="flex items-center gap-2.5 min-w-0">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-700 flex items-center justify-center flex-shrink-0 text-white font-bold text-base">
+        ♻
+      </div>
+      <span class="logo-text font-bold text-white text-base whitespace-nowrap">PakRastah</span>
+    </div>
+    <button onclick="toggleSidebar()"
+            class="flex-shrink-0 ml-2 text-gray-600 hover:text-gray-300 hover:bg-gray-800 p-1.5 rounded-lg transition">
+      <svg id="chevron-left" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+      </svg>
+      <svg id="chevron-right" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
+
+    {% if role == 'admin' %}
+
+    <a href="{{ url_for('admin.dashboard') }}"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+              {% if request.endpoint == 'admin.dashboard' %}bg-emerald-500/15 text-emerald-400{% else %}text-gray-400 hover:bg-gray-800 hover:text-gray-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+      </svg>
+      <span class="nav-label">Dashboard</span>
+    </a>
+
+    <a href="{{ url_for('stubs.food_rescue') }}"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+              {% if request.endpoint == 'stubs.food_rescue' %}bg-orange-500/15 text-orange-400{% else %}text-gray-400 hover:bg-gray-800 hover:text-gray-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+      </svg>
+      <span class="nav-label">Food Rescue</span>
+    </a>
+
+    <a href="{{ url_for('stubs.marketplace') }}"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+              {% if request.endpoint == 'stubs.marketplace' %}bg-sky-500/15 text-sky-400{% else %}text-gray-400 hover:bg-gray-800 hover:text-gray-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+      </svg>
+      <span class="nav-label">Marketplace</span>
+    </a>
+
+    {% elif role == 'business' %}
+
+    <a href="{{ url_for('business.dashboard') }}"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+              {% if request.endpoint == 'business.dashboard' %}bg-emerald-500/15 text-emerald-400{% else %}text-gray-400 hover:bg-gray-800 hover:text-gray-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+      </svg>
+      <span class="nav-label">Dashboard</span>
+    </a>
+
+    <a href="{{ url_for('business.new_event_form') }}"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+              {% if request.endpoint == 'business.new_event_form' %}bg-emerald-500/15 text-emerald-400{% else %}text-gray-400 hover:bg-gray-800 hover:text-gray-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+      </svg>
+      <span class="nav-label">Log Pickup</span>
+    </a>
+
+    {% elif role == 'facility' %}
+
+    <a href="{{ url_for('facility.dashboard') }}"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+              {% if request.endpoint == 'facility.dashboard' %}bg-emerald-500/15 text-emerald-400{% else %}text-gray-400 hover:bg-gray-800 hover:text-gray-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+      </svg>
+      <span class="nav-label">Dashboard</span>
+    </a>
+
+    <a href="{{ url_for('facility.process_form') }}"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+              {% if request.endpoint == 'facility.process_form' %}bg-blue-500/15 text-blue-400{% else %}text-gray-400 hover:bg-gray-800 hover:text-gray-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      <span class="nav-label">Log Output</span>
+    </a>
+
+    {% elif role == 'auditor' %}
+
+    <a href="{{ url_for('auditor.queue') }}"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+              {% if request.endpoint == 'auditor.queue' %}bg-violet-500/15 text-violet-400{% else %}text-gray-400 hover:bg-gray-800 hover:text-gray-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+      </svg>
+      <span class="nav-label">Cert Queue</span>
+    </a>
+
+    <a href="{{ url_for('stubs.food_rescue') }}"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+              {% if request.endpoint == 'stubs.food_rescue' %}bg-orange-500/15 text-orange-400{% else %}text-gray-400 hover:bg-gray-800 hover:text-gray-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+      </svg>
+      <span class="nav-label">Food Rescue</span>
+    </a>
+
+    <a href="{{ url_for('stubs.marketplace') }}"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+              {% if request.endpoint == 'stubs.marketplace' %}bg-sky-500/15 text-sky-400{% else %}text-gray-400 hover:bg-gray-800 hover:text-gray-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+      </svg>
+      <span class="nav-label">Marketplace</span>
+    </a>
+
+    {% elif role == 'citizen' %}
+
+    <a href="{{ url_for('stubs.marketplace') }}"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+              {% if request.endpoint == 'stubs.marketplace' %}bg-sky-500/15 text-sky-400{% else %}text-gray-400 hover:bg-gray-800 hover:text-gray-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+      </svg>
+      <span class="nav-label">Marketplace</span>
+    </a>
+
+    <a href="{{ url_for('stubs.new_listing_form') }}"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+              {% if request.endpoint == 'stubs.new_listing_form' %}bg-emerald-500/15 text-emerald-400{% else %}text-gray-400 hover:bg-gray-800 hover:text-gray-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+      </svg>
+      <span class="nav-label">Sell Item</span>
+    </a>
+
+    <a href="{{ url_for('stubs.wallet') }}"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+              {% if request.endpoint == 'stubs.wallet' %}bg-emerald-500/15 text-emerald-400{% else %}text-gray-400 hover:bg-gray-800 hover:text-gray-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+      </svg>
+      <span class="nav-label">
+        Wallet
+        {% if nav_wallet_balance is not none %}
+        <span class="ml-1 text-emerald-400 font-mono text-xs">{{ '{:,.0f}'.format(nav_wallet_balance) }}</span>
+        {% endif %}
+      </span>
+    </a>
+
+    {% endif %}
+
+  </nav>
+
+  <!-- User footer -->
+  <div class="flex-shrink-0 p-3 border-t border-gray-800">
+    <div class="flex items-center gap-3 px-2 py-1.5">
+      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-blue-600
+                  flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+        {{ (session.full_name or '?')[0]|upper }}
+      </div>
+      <div class="min-w-0 user-text">
+        <p class="text-sm font-medium text-gray-200 truncate">{{ session.full_name }}</p>
+        <p class="text-xs text-gray-500 capitalize">{{ role }}</p>
+      </div>
+    </div>
+    <form method="post" action="{{ url_for('auth.logout') }}" class="mt-1 px-2">
+      <button type="submit"
+              class="flex items-center gap-2 text-xs text-gray-500 hover:text-red-400 transition w-full py-1.5 rounded-lg hover:bg-gray-800 px-2">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        <span class="nav-label user-text">Logout</span>
+      </button>
+    </form>
+  </div>
+</aside>
+
+<!-- ── Main content ── -->
+<div id="main-content" class="flex flex-col min-h-screen">
+
+  <!-- Top bar -->
+  <header class="h-14 bg-[#0b0d1a] border-b border-gray-800 px-6 flex items-center justify-between sticky top-0 z-20 flex-shrink-0">
+    <div class="text-sm text-gray-600 font-medium">
+      {% block page_subtitle %}{% endblock %}
+    </div>
+    <div class="flex items-center gap-3">
+      {% if role == 'citizen' and nav_wallet_balance is not none %}
+      <a href="{{ url_for('stubs.wallet') }}"
+         class="flex items-center gap-1.5 bg-gray-800/80 hover:bg-gray-700 border border-gray-700
+                text-emerald-400 text-xs font-mono px-3 py-1.5 rounded-full transition">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+        </svg>
+        PKR {{ '{:,.0f}'.format(nav_wallet_balance) }}
+      </a>
+      {% endif %}
+      <div class="text-xs text-gray-600 bg-gray-800/50 px-2.5 py-1 rounded-full border border-gray-800 capitalize">
+        {{ role }}
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 px-6 py-6 w-full max-w-7xl mx-auto">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="mb-4 px-4 py-3 rounded-lg text-sm font-medium
+            {% if category == 'success' %}bg-emerald-500/10 text-emerald-300 border border-emerald-700/50
+            {% elif category == 'danger' %}bg-red-500/10 text-red-300 border border-red-700/50
+            {% elif category == 'warning' %}bg-amber-500/10 text-amber-300 border border-amber-700/50
+            {% else %}bg-blue-500/10 text-blue-300 border border-blue-700/50{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const main    = document.getElementById('main-content');
+    const cl = document.getElementById('chevron-left');
+    const cr = document.getElementById('chevron-right');
+    sidebar.classList.toggle('collapsed');
+    main.classList.toggle('expanded');
+    if (sidebar.classList.contains('collapsed')) {
+      cl.classList.add('hidden'); cr.classList.remove('hidden');
+    } else {
+      cl.classList.remove('hidden'); cr.classList.add('hidden');
+    }
+  }
+</script>
+
+{% else %}
+
+<!-- Not logged in — no sidebar -->
+<main class="min-h-screen bg-[#0b0d1a]">
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="mb-4 px-4 py-3 rounded-lg text-sm font-medium
+            {% if category == 'success' %}bg-emerald-500/10 text-emerald-300 border border-emerald-700/50
+            {% elif category == 'danger' %}bg-red-500/10 text-red-300 border border-red-700/50
+            {% elif category == 'warning' %}bg-amber-500/10 text-amber-300 border border-amber-700/50
+            {% else %}bg-blue-500/10 text-blue-300 border border-blue-700/50{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {{ self.content() }}
+  </div>
+</main>
+
+{% endif %}
+
+</body>
+</html>

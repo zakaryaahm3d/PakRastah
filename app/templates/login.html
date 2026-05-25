@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center -mt-6">
+  <div class="bg-[#151929] rounded-2xl border border-gray-800 shadow-2xl w-full max-w-md p-8">
+    <div class="text-center mb-8">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-700 flex items-center justify-center text-3xl mx-auto mb-4">
+        ♻
+      </div>
+      <h1 class="text-2xl font-bold text-gray-100">PakRastah</h1>
+      <p class="text-gray-500 text-sm mt-1">Circular Economy & Waste Management Platform</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="mb-4 px-4 py-3 rounded-lg text-sm
+          {% if category == 'danger' %}bg-red-500/10 text-red-300 border border-red-700/50
+          {% else %}bg-blue-500/10 text-blue-300 border border-blue-700/50{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="post" action="{{ url_for('auth.login') }}" class="space-y-5">
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+        <input type="email" name="email" required autofocus
+               class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-gray-200
+                      placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+        <input type="password" name="password" required
+               class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-gray-200
+                      placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+      </div>
+      <button type="submit"
+              class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold
+                     py-2.5 rounded-lg text-sm transition">
+        Sign In
+      </button>
+    </form>
+
+    <div class="mt-6 pt-5 border-t border-gray-800">
+      <p class="text-xs text-gray-600 font-medium mb-2">Demo credentials</p>
+      <div class="space-y-1 text-xs text-gray-500 font-mono">
+        <div class="flex justify-between"><span>admin@pakrastah.gov.pk</span><span class="text-gray-600">admin123</span></div>
+        <div class="flex justify-between"><span>karachi@foods.pk</span><span class="text-gray-600">business456</span></div>
+        <div class="flex justify-between"><span>auditor@pakrastah.gov.pk</span><span class="text-gray-600">auditor123</span></div>
+        <div class="flex justify-between"><span>facility@recyclepak.pk</span><span class="text-gray-600">facility123</span></div>
+        <div class="flex justify-between text-gray-700"><span class="font-sans not-italic">— Citizens (marketplace) —</span></div>
+        <div class="flex justify-between"><span>citizen1@gmail.com</span><span class="text-gray-600">citizen1</span></div>
+        <div class="flex justify-between"><span>citizen2@gmail.com</span><span class="text-gray-600">citizen2</span></div>
+        <div class="flex justify-between"><span>citizen3@gmail.com</span><span class="text-gray-600">citizen3</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
