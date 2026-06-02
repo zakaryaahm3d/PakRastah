@@ -6,14 +6,20 @@ from flask import g, current_app
 def get_db():
     if 'db' not in g:
         cfg = current_app.config
-        g.db = psycopg2.connect(
-            host=cfg['DB_HOST'],
-            port=cfg['DB_PORT'],
-            dbname=cfg['DB_NAME'],
-            user=cfg['DB_USER'],
-            password=cfg['DB_PASSWORD'],
-            cursor_factory=psycopg2.extras.RealDictCursor,
-        )
+        try:
+            g.db = psycopg2.connect(
+                host=cfg['DB_HOST'],
+                port=cfg['DB_PORT'],
+                dbname=cfg['DB_NAME'],
+                user=cfg['DB_USER'],
+                password=cfg['DB_PASSWORD'],
+                cursor_factory=psycopg2.extras.RealDictCursor,
+            )
+        except psycopg2.OperationalError as exc:
+            raise RuntimeError(
+                'Unable to connect to the database. Ensure DB_PASSWORD is set in .env or your environment '\
+                'and that the PostgreSQL server is reachable on localhost:5432.'
+            ) from exc
         g.db.autocommit = False
     return g.db
 

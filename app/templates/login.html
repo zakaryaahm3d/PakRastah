@@ -1,57 +1,94 @@
 {% extends 'base.html' %}
 {% block title %}Login{% endblock %}
 {% block content %}
-<div class="min-h-screen flex items-center justify-center -mt-6">
-  <div class="bg-[#151929] rounded-2xl border border-gray-800 shadow-2xl w-full max-w-md p-8">
-    <div class="text-center mb-8">
-      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-700 flex items-center justify-center text-3xl mx-auto mb-4">
-        ♻
+<div class="min-h-screen bg-surface flex items-center justify-center px-4 py-10">
+  <div class="w-full max-w-6xl grid gap-6 lg:grid-cols-[1.2fr,0.8fr] items-center">
+    <div class="hidden rounded-[28px] bg-primary-container p-12 text-on-primary lg:flex flex-col justify-between overflow-hidden">
+      <div class="space-y-6">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-4xl">delete_sweep</span>
+          <div>
+            <p class="text-xs uppercase tracking-[0.32em] text-on-primary/70">PakRastah</p>
+            <h1 class="mt-2 text-3xl font-semibold">Civic Waste Intelligence</h1>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <h2 class="text-4xl font-bold leading-tight">Nationwide accountability for every disposal cycle.</h2>
+          <p class="max-w-lg text-sm leading-7 text-on-primary/80">Log in to manage certifications, review compliance queues, or submit marketplace data through a unified government-grade interface.</p>
+        </div>
       </div>
-      <h1 class="text-2xl font-bold text-gray-100">PakRastah</h1>
-      <p class="text-gray-500 text-sm mt-1">Circular Economy & Waste Management Platform</p>
+      <div class="space-y-2">
+        <div class="h-0.5 w-24 bg-on-primary/30"></div>
+        <p class="text-xs uppercase tracking-[0.2em] text-on-primary/70">Departmental Portal</p>
+      </div>
     </div>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% for category, message in messages %}
-        <div class="mb-4 px-4 py-3 rounded-lg text-sm
-          {% if category == 'danger' %}bg-red-500/10 text-red-300 border border-red-700/50
-          {% else %}bg-blue-500/10 text-blue-300 border border-blue-700/50{% endif %}">
-          {{ message }}
+    <div class="rounded-[28px] bg-surface-container-lowest border border-outline shadow-sm p-10">
+      <div class="mb-8">
+        <p class="text-xs uppercase tracking-[0.2em] text-secondary font-semibold">Secure Access</p>
+        <h2 class="mt-3 text-3xl font-semibold text-primary">Portal Login</h2>
+        <p class="mt-2 text-body-sm text-on-surface-variant">Enter your official credentials to continue.</p>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="space-y-3 mb-6">
+            {% for category, message in messages %}
+              <div class="rounded-2xl border px-4 py-3 text-sm font-medium
+                {% if category == 'success' %}bg-emerald-50 border-emerald-200 text-emerald-900
+                {% elif category == 'danger' %}bg-red-50 border-red-200 text-red-900
+                {% elif category == 'warning' %}bg-amber-50 border-amber-200 text-amber-900
+                {% else %}bg-sky-50 border-sky-200 text-sky-900{% endif %}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <form method="post" action="{{ url_for('auth.login') }}" class="space-y-6">
+        <div class="space-y-3">
+          <label for="email" class="block text-xs font-semibold uppercase tracking-[0.2em] text-on-surface-variant">Email Address</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">alternate_email</span>
+            <input id="email" name="email" type="email" required autofocus placeholder="admin@pakrastah.gov.pk"
+              class="w-full rounded-xl border border-outline bg-surface-container py-3 pl-11 pr-4 text-base text-on-surface outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary/20" />
+          </div>
         </div>
-      {% endfor %}
-    {% endwith %}
 
-    <form method="post" action="{{ url_for('auth.login') }}" class="space-y-5">
-      <div>
-        <label class="block text-sm font-medium text-gray-300 mb-1">Email</label>
-        <input type="email" name="email" required autofocus
-               class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-gray-200
-                      placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-300 mb-1">Password</label>
-        <input type="password" name="password" required
-               class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-gray-200
-                      placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
-      </div>
-      <button type="submit"
-              class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold
-                     py-2.5 rounded-lg text-sm transition">
-        Sign In
-      </button>
-    </form>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <label for="password" class="text-xs font-semibold uppercase tracking-[0.2em] text-on-surface-variant">Password</label>
+            <span class="text-sm text-secondary hover:underline">Forgot?</span>
+          </div>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">lock</span>
+            <input id="password" name="password" type="password" required placeholder="••••••••"
+              class="w-full rounded-xl border border-outline bg-surface-container py-3 pl-11 pr-4 text-base text-on-surface outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary/20" />
+          </div>
+        </div>
 
-    <div class="mt-6 pt-5 border-t border-gray-800">
-      <p class="text-xs text-gray-600 font-medium mb-2">Demo credentials</p>
-      <div class="space-y-1 text-xs text-gray-500 font-mono">
-        <div class="flex justify-between"><span>admin@pakrastah.gov.pk</span><span class="text-gray-600">admin123</span></div>
-        <div class="flex justify-between"><span>karachi@foods.pk</span><span class="text-gray-600">business456</span></div>
-        <div class="flex justify-between"><span>auditor@pakrastah.gov.pk</span><span class="text-gray-600">auditor123</span></div>
-        <div class="flex justify-between"><span>facility@recyclepak.pk</span><span class="text-gray-600">facility123</span></div>
-        <div class="flex justify-between text-gray-700"><span class="font-sans not-italic">— Citizens (marketplace) —</span></div>
-        <div class="flex justify-between"><span>citizen1@gmail.com</span><span class="text-gray-600">citizen1</span></div>
-        <div class="flex justify-between"><span>citizen2@gmail.com</span><span class="text-gray-600">citizen2</span></div>
-        <div class="flex justify-between"><span>citizen3@gmail.com</span><span class="text-gray-600">citizen3</span></div>
+        <label class="flex items-center gap-3 text-sm text-on-surface-variant">
+          <input id="remember" name="remember" type="checkbox" class="h-4 w-4 rounded border-outline text-primary focus:ring-primary" />
+          Stay signed in for 24 hours
+        </label>
+
+        <button type="submit" class="w-full rounded-xl bg-primary-container px-4 py-3 text-sm font-semibold text-on-primary transition hover:bg-primary">
+          <span class="inline-flex items-center gap-2 justify-center">
+            <span class="material-symbols-outlined">login</span>
+            Sign In
+          </span>
+        </button>
+      </form>
+
+      <div class="mt-10 border-t border-outline pt-6 text-sm text-on-surface-variant">
+        <p class="mb-3 font-semibold text-on-surface">Demo accounts</p>
+        <div class="space-y-2 font-mono text-xs text-on-surface-variant">
+          <div class="flex justify-between"><span>admin@pakrastah.gov.pk</span><span>admin123</span></div>
+          <div class="flex justify-between"><span>karachi@foods.pk</span><span>business456</span></div>
+          <div class="flex justify-between"><span>auditor@pakrastah.gov.pk</span><span>auditor123</span></div>
+          <div class="flex justify-between"><span>facility@recyclepak.pk</span><span>facility123</span></div>
+        </div>
       </div>
     </div>
   </div>

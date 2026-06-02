@@ -1,16 +1,29 @@
-<div id="cert-row-{{ queue_id }}"
-     class="bg-emerald-500/10 border border-emerald-700/40 rounded-xl p-6">
-  <div class="flex items-center gap-3">
-    <span class="text-2xl">✅</span>
+<div id="cert-row-{{ queue_id }}" class="bg-[#081124] rounded-[28px] border border-emerald-500/20 p-6 shadow-lg shadow-emerald-500/10">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <p class="font-semibold text-emerald-300">Certification Approved</p>
-      <p class="text-sm text-emerald-400">
-        Cert # <span class="font-mono">{{ cert_number }}</span> issued —
-        <span class="font-medium capitalize">{{ tier }}</span> tier
-      </p>
-      <p class="text-xs text-emerald-600 mt-1">
-        Run <code class="bg-[#0f1222] px-1 rounded">apply_monthly_tax_credits()</code> from the Developer Panel to issue the tax credit.
-      </p>
+      <p class="text-sm font-semibold text-emerald-300">Certification Approved</p>
+      <p class="mt-1 text-xs text-inverse-on-surface-variant">Queue ID {{ queue_id }}</p>
+    </div>
+    <span class="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-200">
+      <span class="material-symbols-outlined">verified</span>
+      {{ tier|capitalize }} tier
+    </span>
+  </div>
+
+  <div class="mt-5 grid gap-4 sm:grid-cols-3">
+    <div class="rounded-[24px] bg-[#071022] p-4">
+      <p class="text-[10px] uppercase tracking-[0.24em] text-slate-400">Certification #</p>
+      <p class="mt-2 font-semibold text-white">{{ cert_number }}</p>
+    </div>
+    <div class="rounded-2xl bg-[#071022] p-4">
+      <p class="text-[10px] uppercase tracking-[0.24em] text-slate-400">Status</p>
+      <p class="mt-2 font-semibold text-emerald-300">Approved</p>
+    </div>
+    <div class="rounded-2xl bg-[#071022] p-4">
+      <p class="text-[10px] uppercase tracking-[0.24em] text-slate-400">Next step</p>
+      <p class="mt-2 font-semibold text-slate-100">Tax credit issuance</p>
     </div>
   </div>
+
+  <p class="mt-4 text-xs text-inverse-on-surface-variant">This queue item is now complete and archived.</p>
 </div>

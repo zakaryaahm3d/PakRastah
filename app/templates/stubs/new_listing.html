@@ -1,83 +1,62 @@
 {% extends 'base.html' %}
 {% block title %}Sell an Item{% endblock %}
+{% block page_subtitle %}Create a marketplace listing with a clean, modern form.{% endblock %}
 {% block content %}
 
-<div class="max-w-lg mx-auto">
-  <div class="mb-6">
-    <a href="{{ url_for('stubs.marketplace') }}" class="text-sm text-emerald-400 hover:underline">← Back to marketplace</a>
-    <h1 class="text-2xl font-bold text-gray-100 mt-2">List an Item for Sale</h1>
-    <p class="text-gray-500 text-sm mt-1">Give your second-hand item a second life.</p>
+<div class="mx-auto max-w-lg space-y-6">
+  <div class="rounded-3xl border border-outline bg-white p-6 shadow-sm">
+    <a href="{{ url_for('stubs.marketplace') }}" class="inline-flex items-center gap-2 text-sm font-medium text-secondary hover:text-primary">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Back to marketplace
+    </a>
+    <div class="mt-4">
+      <h1 class="text-3xl font-semibold text-primary">List an Item for Sale</h1>
+      <p class="mt-2 text-sm text-on-surface-variant">Give your second-hand item a second life.</p>
+    </div>
   </div>
 
-  <div class="bg-[#151929] rounded-xl border border-gray-800 p-6">
-    <form method="post" action="{{ url_for('stubs.create_listing') }}" class="space-y-5">
-
+  <div class="rounded-3xl border border-outline bg-white p-6 shadow-sm">
+    <form method="post" action="{{ url_for('stubs.create_listing') }}" class="space-y-6">
       <div>
-        <label class="block text-sm font-medium text-gray-300 mb-1">Item Title</label>
-        <input type="text" name="title" required maxlength="255"
-               placeholder="e.g. Wooden Study Table"
-               class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
-                      placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        <label class="block text-sm font-semibold text-on-surface">Item Title</label>
+        <input type="text" name="title" required maxlength="255" placeholder="e.g. Wooden Study Table" class="mt-2 w-full rounded-2xl border border-outline bg-surface-container px-4 py-3 text-sm text-on-surface focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/30" />
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-300 mb-1">
-          Description <span class="text-gray-600 font-normal">(optional)</span>
-        </label>
-        <textarea name="description" rows="3"
-                  placeholder="Condition, any defects, why you're selling…"
-                  class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
-                         placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+        <label class="block text-sm font-semibold text-on-surface">Description <span class="text-on-surface-variant font-normal">(optional)</span></label>
+        <textarea name="description" rows="4" placeholder="Condition, any defects, why you're selling…" class="mt-2 w-full rounded-2xl border border-outline bg-surface-container px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/30"></textarea>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid gap-4 sm:grid-cols-2">
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">Category</label>
-          <select name="category" required
-                  class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
-                         focus:outline-none focus:ring-2 focus:ring-emerald-500">
-            <option value="" class="bg-[#0f1222]">Select…</option>
+          <label class="block text-sm font-semibold text-on-surface">Category</label>
+          <select name="category" required class="mt-2 w-full rounded-2xl border border-outline bg-surface-container px-4 py-3 text-sm text-on-surface focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/30">
+            <option value="">Select…</option>
             {% for cat in ['clothing','electronics','furniture','books','appliances','materials','other'] %}
-            <option value="{{ cat }}" class="bg-[#0f1222]">{{ cat|capitalize }}</option>
+            <option value="{{ cat }}">{{ cat|capitalize }}</option>
             {% endfor %}
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">City</label>
-          <input type="text" name="city" maxlength="100"
-                 placeholder="e.g. Lahore"
-                 class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
-                        placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          <label class="block text-sm font-semibold text-on-surface">City</label>
+          <input type="text" name="city" maxlength="100" placeholder="e.g. Lahore" class="mt-2 w-full rounded-2xl border border-outline bg-surface-container px-4 py-3 text-sm text-on-surface focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/30" />
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid gap-4 sm:grid-cols-2">
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">Price (PKR)</label>
-          <input type="number" name="price_pkr" required min="0" step="1"
-                 placeholder="e.g. 5000"
-                 class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
-                        placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          <label class="block text-sm font-semibold text-on-surface">Price (PKR)</label>
+          <input type="number" name="price_pkr" required min="0" step="1" placeholder="e.g. 5000" class="mt-2 w-full rounded-2xl border border-outline bg-surface-container px-4 py-3 text-sm text-on-surface focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/30" />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-1">Quantity</label>
-          <input type="number" name="quantity" required min="1" value="1"
-                 class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
-                        focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          <label class="block text-sm font-semibold text-on-surface">Quantity</label>
+          <input type="number" name="quantity" required min="1" value="1" class="mt-2 w-full rounded-2xl border border-outline bg-surface-container px-4 py-3 text-sm text-on-surface focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/30" />
         </div>
       </div>
 
-      <div class="pt-2 flex gap-3">
-        <button type="submit"
-                class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold
-                       py-2.5 rounded-lg text-sm transition">
-          Post Listing
-        </button>
-        <a href="{{ url_for('stubs.marketplace') }}"
-           class="flex-1 text-center border border-gray-700 text-gray-400 hover:bg-gray-800
-                  font-medium py-2.5 rounded-lg text-sm transition">
-          Cancel
-        </a>
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <button type="submit" class="rounded-2xl bg-secondary px-6 py-3 text-sm font-semibold text-on-secondary hover:bg-secondary-container transition">Post Listing</button>
+        <a href="{{ url_for('stubs.marketplace') }}" class="inline-flex justify-center rounded-2xl border border-outline bg-surface-container px-6 py-3 text-sm font-semibold text-secondary hover:bg-surface-container-high transition">Cancel</a>
       </div>
     </form>
   </div>

@@ -1,107 +1,87 @@
 {% extends 'base.html' %}
 {% block title %}Log Processing Output{% endblock %}
+{% block page_subtitle %}Submit facility processing output and update business diversion metrics.{% endblock %}
 {% block content %}
 
-<div class="max-w-lg mx-auto">
-  <div class="mb-6">
-    <a href="{{ url_for('facility.dashboard') }}" class="text-sm text-emerald-400 hover:underline">← Back to dashboard</a>
-    <h1 class="text-2xl font-bold text-gray-100 mt-2">Log Processing Output</h1>
-    <p class="text-gray-500 text-sm mt-1">
-      Submitting this form fires Trigger 1 and recomputes the business's diversion ratio.
-    </p>
+<div class="mx-auto max-w-lg space-y-6">
+  <div class="rounded-3xl border border-outline bg-white p-6 shadow-sm">
+    <a href="{{ url_for('facility.dashboard') }}" class="inline-flex items-center gap-2 text-sm font-medium text-secondary hover:text-primary">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Back to dashboard
+    </a>
+    <div class="mt-4">
+      <h1 class="text-3xl font-semibold text-primary">Log Processing Output</h1>
+      <p class="mt-2 text-sm text-on-surface-variant">Submitting this form fires Trigger 1 and recomputes the business's diversion ratio.</p>
+    </div>
   </div>
 
-  <div class="bg-[#151929] rounded-xl border border-gray-800 p-6">
-    <form method="post" action="{{ url_for('facility.create_output') }}" class="space-y-5">
-
+  <div class="rounded-3xl border border-outline bg-white p-6 shadow-sm">
+    <form method="post" action="{{ url_for('facility.create_output') }}" class="space-y-6">
       <div>
-        <label class="block text-sm font-medium text-gray-300 mb-1">Waste Event</label>
-        <select name="event_id" id="event_select" required
-                class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
-                       focus:outline-none focus:ring-2 focus:ring-emerald-500">
-          <option value="" class="bg-[#0f1222]">Select an unprocessed event…</option>
+        <label class="block text-sm font-semibold text-on-surface">Waste Event</label>
+        <select name="event_id" id="event_select" required class="mt-2 w-full rounded-2xl border border-outline bg-surface-container px-4 py-3 text-sm text-on-surface focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/30">
+          <option value="">Select an unprocessed event…</option>
           {% for ev in unprocessed %}
-          <option value="{{ ev.event_id }}"
-                  data-tonnage="{{ ev.tonnage }}"
-                  class="bg-[#0f1222]"
-                  {% if request.args.get('event_id') == ev.event_id|string %}selected{% endif %}>
-            #{{ ev.event_id }} — {{ ev.business_name }} — {{ ev.event_date.strftime('%d %b %Y') if ev.event_date else '' }}
-            ({{ ev.tonnage }} kg {{ ev.waste_type }})
-          </option>
+          <option value="{{ ev.event_id }}" data-tonnage="{{ ev.tonnage }}" {% if request.args.get('event_id') == ev.event_id|string %}selected{% endif %}>#{{ ev.event_id }} — {{ ev.business_name }} — {{ ev.event_date.strftime('%d %b %Y') if ev.event_date else '' }} ({{ ev.tonnage }} kg {{ ev.waste_type }})</option>
           {% endfor %}
         </select>
-        <p id="tonnage-hint" class="text-xs text-gray-600 mt-1 hidden">Input tonnage: <span id="tonnage-val" class="text-gray-400"></span> kg</p>
+        <p id="tonnage-hint" class="mt-2 text-xs text-on-surface-variant hidden">Input tonnage: <span id="tonnage-val" class="font-semibold text-on-surface">0</span> kg</p>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-300 mb-1">
-          Recovered Tonnage <span class="text-gray-600 font-normal">(kg)</span>
-        </label>
-        <input type="number" name="recovered_tonnage" id="recovered_input"
-               required min="0.001" step="0.001"
-               placeholder="e.g. 280.0"
-               class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
-                      placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-        <p class="text-xs text-gray-600 mt-1">Cannot exceed input tonnage.</p>
+        <label class="block text-sm font-semibold text-on-surface">Recovered Tonnage <span class="text-on-surface-variant font-normal">(kg)</span></label>
+        <input type="number" name="recovered_tonnage" id="recovered_input" required min="0.001" step="0.001" placeholder="e.g. 280.0" class="mt-2 w-full rounded-2xl border border-outline bg-surface-container px-4 py-3 text-sm text-on-surface focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/30" />
+        <p class="mt-2 text-xs text-on-surface-variant">Cannot exceed input tonnage.</p>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-300 mb-1">Output Type</label>
-        <select name="output_type" required
-                class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
-                       focus:outline-none focus:ring-2 focus:ring-emerald-500">
-          <option value="" class="bg-[#0f1222]">Select…</option>
-          <option value="recycled" class="bg-[#0f1222]">Recycled</option>
-          <option value="composted" class="bg-[#0f1222]">Composted</option>
-          <option value="reused" class="bg-[#0f1222]">Reused</option>
-          <option value="energy_recovery" class="bg-[#0f1222]">Energy Recovery</option>
+        <label class="block text-sm font-semibold text-on-surface">Output Type</label>
+        <select name="output_type" required class="mt-2 w-full rounded-2xl border border-outline bg-surface-container px-4 py-3 text-sm text-on-surface focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/30">
+          <option value="">Select…</option>
+          <option value="recycled">Recycled</option>
+          <option value="composted">Composted</option>
+          <option value="reused">Reused</option>
+          <option value="energy_recovery">Energy Recovery</option>
         </select>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-300 mb-1">Processing Date</label>
-        <input type="date" name="processed_date" required
-               class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
-                      focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        <label class="block text-sm font-semibold text-on-surface">Processing Date</label>
+        <input type="date" name="processed_date" required class="mt-2 w-full rounded-2xl border border-outline bg-surface-container px-4 py-3 text-sm text-on-surface focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/30" />
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-300 mb-1">Notes <span class="text-gray-600 font-normal">(optional)</span></label>
-        <textarea name="notes" rows="2"
-                  class="w-full bg-[#0f1222] border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200
-                         placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+        <label class="block text-sm font-semibold text-on-surface">Notes <span class="text-on-surface-variant font-normal">(optional)</span></label>
+        <textarea name="notes" rows="3" class="mt-2 w-full rounded-2xl border border-outline bg-surface-container px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/30"></textarea>
       </div>
 
-      <div class="pt-2 flex gap-3">
-        <button type="submit"
-                class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold
-                       py-2.5 rounded-lg text-sm transition">
-          Log Output
-        </button>
-        <a href="{{ url_for('facility.dashboard') }}"
-           class="flex-1 text-center border border-gray-700 text-gray-400 hover:bg-gray-800
-                  font-medium py-2.5 rounded-lg text-sm transition">
-          Cancel
-        </a>
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <button type="submit" class="w-full rounded-2xl bg-secondary px-6 py-3 text-sm font-semibold text-on-secondary hover:bg-secondary-container transition">Log Output</button>
+        <a href="{{ url_for('facility.dashboard') }}" class="inline-flex justify-center w-full rounded-2xl border border-outline bg-surface-container px-6 py-3 text-sm font-semibold text-secondary hover:bg-surface-container-high transition">Cancel</a>
       </div>
     </form>
   </div>
 </div>
 
 <script>
-  const sel     = document.getElementById('event_select');
-  const hint    = document.getElementById('tonnage-hint');
-  const tVal    = document.getElementById('tonnage-val');
-  const dateIn  = document.querySelector('[name="processed_date"]');
+  const sel = document.getElementById('event_select');
+  const hint = document.getElementById('tonnage-hint');
+  const tVal = document.getElementById('tonnage-val');
+  const dateIn = document.querySelector('[name="processed_date"]');
 
   dateIn.value = new Date().toISOString().split('T')[0];
 
   sel.addEventListener('change', () => {
     const opt = sel.options[sel.selectedIndex];
-    const kg  = opt.dataset.tonnage;
-    if (kg) { tVal.textContent = kg; hint.classList.remove('hidden'); }
-    else     { hint.classList.add('hidden'); }
+    const kg = opt.dataset.tonnage;
+    if (kg) {
+      tVal.textContent = kg;
+      hint.classList.remove('hidden');
+    } else {
+      hint.classList.add('hidden');
+    }
   });
   sel.dispatchEvent(new Event('change'));
 </script>
+
 {% endblock %}

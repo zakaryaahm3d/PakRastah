@@ -1,193 +1,115 @@
 {% extends 'base.html' %}
 {% block title %}Admin Dashboard{% endblock %}
+{% block page_subtitle %}Waste Compliance Portal Dashboard Overview{% endblock %}
 {% block content %}
 
-<div class="mb-6">
-  <h1 class="text-2xl font-bold text-gray-100">Admin Dashboard</h1>
-  <p class="text-gray-500 text-sm mt-1">Platform-wide overview — live counts from the waste ledger</p>
+<div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+  <div>
+    <h1 class="text-3xl font-semibold text-primary">Admin Dashboard</h1>
+    <p class="mt-2 text-sm text-on-surface-variant">Platform-wide overview — live counts from the waste ledger.</p>
+  </div>
+  <a href="{{ url_for('stubs.food_rescue') }}" class="inline-flex items-center gap-2 rounded-xl border border-outline bg-surface-container px-4 py-2 text-sm font-medium text-secondary hover:bg-surface-container-high">
+    <span class="material-symbols-outlined">local_florist</span>
+    Food Rescue Portal
+  </a>
+</div><div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4 mb-6">
+  <div class="rounded-3xl border border-outline bg-white p-6 shadow-sm">
+    <p class="text-xs uppercase tracking-[0.32em] text-on-surface-variant">Businesses</p>
+    <p class="mt-4 text-3xl font-semibold text-primary">{{ counts.businesses }}</p>
+  </div>
+  <div class="rounded-3xl border border-outline bg-white p-6 shadow-sm">
+    <p class="text-xs uppercase tracking-[0.32em] text-on-surface-variant">Waste Events</p>
+    <p class="mt-4 text-3xl font-semibold text-primary">{{ counts.waste_events }}</p>
+  </div>
+  <div class="rounded-3xl border border-outline bg-white p-6 shadow-sm">
+    <p class="text-xs uppercase tracking-[0.32em] text-on-surface-variant">Active Certs</p>
+    <p class="mt-4 text-3xl font-semibold text-primary">{{ counts.active_certs }}</p>
+  </div>
+  <div class="rounded-3xl border border-outline bg-white p-6 shadow-sm">
+    <p class="text-xs uppercase tracking-[0.32em] text-on-surface-variant">Pending Reviews</p>
+    <p class="mt-4 text-3xl font-semibold text-primary">{{ counts.pending_reviews }}</p>
+  </div>
 </div>
 
-{# Stat cards #}
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-
-  <div class="bg-[#151929] rounded-xl border border-gray-800 p-5 flex items-center justify-between">
-    <div>
-      <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Businesses</p>
-      <p class="text-3xl font-bold text-gray-100 mt-1">{{ counts.businesses }}</p>
-    </div>
-    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center flex-shrink-0">
-      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-      </svg>
-    </div>
+<div class="grid gap-4 lg:grid-cols-3 mb-6">
+  <div class="rounded-3xl border border-outline bg-surface-container p-6">
+    <p class="text-xs uppercase tracking-[0.32em] text-on-surface-variant">Tax Credits Issued</p>
+    <p class="mt-4 text-2xl font-semibold text-secondary">PKR {{ '{:,.0f}'.format(counts.total_credits_pkr) }}</p>
   </div>
-
-  <div class="bg-[#151929] rounded-xl border border-gray-800 p-5 flex items-center justify-between">
-    <div>
-      <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Waste Events</p>
-      <p class="text-3xl font-bold text-gray-100 mt-1">{{ counts.waste_events }}</p>
-    </div>
-    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0">
-      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-      </svg>
-    </div>
+  <div class="rounded-3xl border border-outline bg-surface-container p-6">
+    <p class="text-xs uppercase tracking-[0.32em] text-on-surface-variant">Food Donations</p>
+    <p class="mt-4 text-2xl font-semibold text-orange-600">{{ counts.food_donations }}</p>
+    <a href="{{ url_for('stubs.food_rescue') }}" class="mt-3 inline-flex text-sm font-medium text-secondary hover:underline">View portal →</a>
   </div>
-
-  <div class="bg-[#151929] rounded-xl border border-gray-800 p-5 flex items-center justify-between">
-    <div>
-      <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Active Certs</p>
-      <p class="text-3xl font-bold text-gray-100 mt-1">{{ counts.active_certs }}</p>
-    </div>
-    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center flex-shrink-0">
-      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-      </svg>
-    </div>
+  <div class="rounded-3xl border border-outline bg-surface-container p-6">
+    <p class="text-xs uppercase tracking-[0.32em] text-on-surface-variant">Active Listings</p>
+    <p class="mt-4 text-2xl font-semibold text-sky-600">{{ counts.active_listings }}</p>
+    <a href="{{ url_for('stubs.marketplace') }}" class="mt-3 inline-flex text-sm font-medium text-secondary hover:underline">View listings →</a>
   </div>
-
-  <div class="bg-[#151929] rounded-xl border border-gray-800 p-5 flex items-center justify-between">
-    <div>
-      <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Pending Reviews</p>
-      <p class="text-3xl font-bold text-gray-100 mt-1">{{ counts.pending_reviews }}</p>
-    </div>
-    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
-      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
-    </div>
-  </div>
-
 </div>
 
-<div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-
-  <div class="bg-[#151929] rounded-xl border border-gray-800 p-5 flex items-center justify-between">
-    <div>
-      <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Tax Credits Issued</p>
-      <p class="text-xl font-bold text-emerald-400 mt-1">PKR {{ '{:,.0f}'.format(counts.total_credits_pkr) }}</p>
-    </div>
-    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center flex-shrink-0">
-      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
-    </div>
-  </div>
-
-  <div class="bg-[#151929] rounded-xl border border-gray-800 p-5 flex items-center justify-between">
-    <div>
-      <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Food Donations</p>
-      <p class="text-3xl font-bold text-orange-400 mt-1">{{ counts.food_donations }}</p>
-      <a href="{{ url_for('stubs.food_rescue') }}" class="text-xs text-gray-600 hover:text-emerald-400 mt-1 block transition">View portal →</a>
-    </div>
-    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center flex-shrink-0">
-      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-      </svg>
-    </div>
-  </div>
-
-  <div class="bg-[#151929] rounded-xl border border-gray-800 p-5 flex items-center justify-between">
-    <div>
-      <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Active Listings</p>
-      <p class="text-3xl font-bold text-sky-400 mt-1">{{ counts.active_listings }}</p>
-      <a href="{{ url_for('stubs.marketplace') }}" class="text-xs text-gray-600 hover:text-emerald-400 mt-1 block transition">View listings →</a>
-    </div>
-    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center flex-shrink-0">
-      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-      </svg>
-    </div>
-  </div>
-
-</div>
-
-{# Pending review queue #}
 {% if queue %}
-<div class="bg-amber-500/8 border border-amber-700/40 rounded-xl p-5 mb-6">
-  <h2 class="text-sm font-semibold text-amber-300 mb-3 flex items-center gap-2">
-    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-    </svg>
-    Certification Queue — Awaiting Review
-  </h2>
-  <div class="space-y-2">
+<div class="rounded-3xl border border-amber-200 bg-amber-50 p-6 mb-6">
+  <div class="flex items-center gap-3 text-amber-900 mb-4">
+    <span class="material-symbols-outlined">warning</span>
+    <h2 class="text-base font-semibold">Certification Queue</h2>
+  </div>
+  <div class="space-y-3">
     {% for q in queue %}
-    <div class="flex items-center justify-between text-sm bg-[#151929] rounded-lg px-4 py-2.5 border border-gray-800">
-      <span class="font-medium text-gray-200">{{ q.name }}</span>
-      <span class="text-gray-500">{{ q.city }}</span>
-      <span class="px-2 py-0.5 rounded text-xs font-medium
-        {% if q.tier == 'gold' %}bg-yellow-500/15 text-yellow-400
-        {% elif q.tier == 'silver' %}bg-gray-500/15 text-gray-400
-        {% else %}bg-orange-500/15 text-orange-400{% endif %}">
-        {{ q.tier or '—' }}
-      </span>
-      <span class="text-xs text-gray-600">{{ q.submitted_at.strftime('%d %b %Y') if q.submitted_at else '—' }}</span>
-      <a href="{{ url_for('auditor.queue') }}" class="text-xs text-emerald-400 font-medium hover:underline">Review →</a>
+    <div class="rounded-3xl border border-outline bg-white p-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
+      <div>
+        <p class="text-sm font-semibold text-primary">{{ q.name }}</p>
+        <p class="text-sm text-on-surface-variant">{{ q.city }}</p>
+      </div>
+      <div class="flex items-center gap-2 text-xs font-semibold">
+        <span class="rounded-full px-2 py-1 {% if q.tier == 'gold' %}bg-yellow-100 text-yellow-700{% elif q.tier == 'silver' %}bg-slate-100 text-slate-700{% else %}bg-orange-100 text-orange-700{% endif %}">{{ q.tier or '—' }}</span>
+        <span class="text-on-surface-variant">{{ q.submitted_at.strftime('%d %b %Y') if q.submitted_at else '—' }}</span>
+      </div>
+      <a href="{{ url_for('auditor.queue') }}" class="text-sm font-medium text-secondary hover:underline">Review →</a>
     </div>
     {% endfor %}
   </div>
 </div>
 {% endif %}
 
-{# Monthly sustainability report #}
-<div class="bg-[#151929] rounded-xl border border-gray-800 overflow-hidden">
-  <div class="px-6 py-4 border-b border-gray-800">
-    <h2 class="font-semibold text-gray-200">Monthly Sustainability Report</h2>
-    <p class="text-xs text-gray-600 mt-0.5">
-      4-table join: businesses ⟶ waste_events (INNER) ⟵ processing_facilities,
-      LEFT JOIN certifications, LEFT JOIN tax_credits
-    </p>
+<div class="rounded-3xl border border-outline bg-white overflow-hidden">
+  <div class="px-6 py-5 border-b border-surface-container-high">
+    <h2 class="text-lg font-semibold text-primary">Monthly Sustainability Report</h2>
+    <p class="mt-2 text-sm text-on-surface-variant">4-table join: businesses ⟶ waste_events (INNER) ⟵ processing_facilities, LEFT JOIN certifications, LEFT JOIN tax_credits</p>
   </div>
   <div class="overflow-x-auto">
-    <table class="w-full text-sm">
-      <thead class="bg-[#0f1222] text-xs text-gray-500 uppercase tracking-wide">
+    <table class="w-full text-sm border-separate border-spacing-0">
+      <thead class="bg-surface-container text-xs uppercase tracking-[0.18em] text-on-surface-variant">
         <tr>
           <th class="px-4 py-3 text-left">Business</th>
           <th class="px-4 py-3 text-left">City</th>
           <th class="px-4 py-3 text-left">Category</th>
           <th class="px-4 py-3 text-right">Events</th>
-          <th class="px-4 py-3 text-right">Tonnage (kg)</th>
-          <th class="px-4 py-3 text-right">Diversion %</th>
+          <th class="px-4 py-3 text-right">Tonnage</th>
+          <th class="px-4 py-3 text-right">Diversion</th>
           <th class="px-4 py-3 text-center">Cert Tier</th>
-          <th class="px-4 py-3 text-right">Credits (PKR)</th>
+          <th class="px-4 py-3 text-right">Credits</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-800/60">
+      <tbody class="divide-y divide-surface-container-high">
         {% for row in report %}
-        <tr class="hover:bg-[#1c2038] transition">
-          <td class="px-4 py-3 font-medium text-gray-200">{{ row.business_name }}</td>
-          <td class="px-4 py-3 text-gray-400">{{ row.city }}</td>
-          <td class="px-4 py-3 text-gray-500 capitalize">{{ row.category.replace('_',' ') }}</td>
-          <td class="px-4 py-3 text-right text-gray-300">{{ row.total_events }}</td>
-          <td class="px-4 py-3 text-right text-gray-300">{{ '{:,.0f}'.format(row.total_tonnage_kg) }}</td>
+        <tr class="hover:bg-surface-container">
+          <td class="px-4 py-3 font-medium text-on-surface">{{ row.business_name }}</td>
+          <td class="px-4 py-3 text-on-surface-variant">{{ row.city }}</td>
+          <td class="px-4 py-3 text-on-surface-variant capitalize">{{ row.category.replace('_',' ') }}</td>
+          <td class="px-4 py-3 text-right text-on-surface-variant">{{ row.total_events }}</td>
+          <td class="px-4 py-3 text-right text-on-surface-variant">{{ '{:,.0f}'.format(row.total_tonnage_kg) }}</td>
           <td class="px-4 py-3 text-right">
-            <span class="font-semibold
-              {% if row.diversion_pct >= 75 %}text-emerald-400
-              {% elif row.diversion_pct >= 60 %}text-yellow-400
-              {% else %}text-red-400{% endif %}">
-              {{ row.diversion_pct }}%
-            </span>
+            <span class="font-semibold {% if row.diversion_pct >= 75 %}text-emerald-600{% elif row.diversion_pct >= 60 %}text-amber-600{% else %}text-red-600{% endif %}">{{ row.diversion_pct }}%</span>
           </td>
           <td class="px-4 py-3 text-center">
             {% if row.cert_tier %}
-              <span class="inline-block px-2 py-0.5 rounded text-xs font-medium
-                {% if row.cert_tier == 'gold'    %}bg-yellow-500/15 text-yellow-400
-                {% elif row.cert_tier == 'silver' %}bg-gray-500/15   text-gray-400
-                {% else                           %}bg-orange-500/15 text-orange-400{% endif %}">
-                {{ row.cert_tier|capitalize }}
-              </span>
+              <span class="inline-flex items-center justify-center rounded-full px-2 py-1 text-[11px] font-semibold {% if row.cert_tier == 'gold' %}bg-yellow-100 text-yellow-700{% elif row.cert_tier == 'silver' %}bg-slate-100 text-slate-700{% else %}bg-orange-100 text-orange-700{% endif %}">{{ row.cert_tier|capitalize }}</span>
             {% else %}
-              <span class="text-gray-700 text-xs">—</span>
+              <span class="text-on-surface-variant text-xs">—</span>
             {% endif %}
           </td>
-          <td class="px-4 py-3 text-right text-gray-300">
-            {% if row.total_credits_pkr > 0 %}
-              PKR {{ '{:,.0f}'.format(row.total_credits_pkr) }}
-            {% else %}
-              <span class="text-gray-700">—</span>
-            {% endif %}
-          </td>
+          <td class="px-4 py-3 text-right text-on-surface-variant">{% if row.total_credits_pkr > 0 %}PKR {{ '{:,.0f}'.format(row.total_credits_pkr) }}{% else %}<span class="text-on-surface-variant">—</span>{% endif %}</td>
         </tr>
         {% endfor %}
       </tbody>

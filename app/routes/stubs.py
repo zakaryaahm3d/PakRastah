@@ -159,6 +159,95 @@ def marketplace():
                            viewer_id=uid, role=role)
 
 
+@stubs_bp.route('/search')
+@login_required()
+def search():
+    query_text = request.args.get('q', '').strip()
+    results = {
+        'businesses': [],
+        'users': [],
+        'events': [],
+        'listings': []
+    }
+
+    if query_text:
+        search_term = f'%{query_text}%'
+        results['businesses'] = query(
+            '''SELECT business_id, name, city, category
+               FROM businesses
+               WHERE name ILIKE %s
+               ORDER BY name
+               LIMIT 10''',
+            (search_term,), fetchall=True
+        )
+        results['users'] = query(
+            '''SELECT user_id, full_name, email, role
+               FROM users
+               WHERE full_name ILIKE %s OR email ILIKE %s
+               ORDER BY full_name
+               LIMIT 10''',
+            (search_term, search_term), fetchall=True
+        )
+        results['events'] = query(
+            '''SELECT event_id, event_date, status, tonnage, waste_type
+               FROM waste_events
+               WHERE notes ILIKE %s
+               ORDER BY event_date DESC
+               LIMIT 10''',
+            (search_term,), fetchall=True
+        )
+        results['listings'] = query(
+            '''SELECT listing_id, title, category, price_pkr, status
+               FROM marketplace_listings
+               WHERE title ILIKE %s OR description ILIKE %s
+               ORDER BY listed_at DESC
+               LIMIT 10''',
+            (search_term, search_term), fetchall=True
+        )
+
+    return render_template('stubs/search_results.html', query_text=query_text, results=results)
+
+
+@stubs_bp.route('/notifications')
+@login_required()
+def notifications():
+    entries = query(
+        '''SELECT log_id, table_name, operation, row_id, performed_by, performed_at, context
+           FROM audit_log
+           ORDER BY performed_at DESC
+           LIMIT 30''',
+        fetchall=True
+    )
+    return render_template('stubs/notifications.html', entries=entries)
+
+
+@stubs_bp.route('/activity')
+@login_required()
+def activity():
+    role = session.get('role')
+    if role == 'citizen':
+        txns = query(
+            '''SELECT wt.txn_id, wt.amount, wt.txn_type, wt.description, wt.created_at,
+                      ml.title AS listing_title
+               FROM wallet_transactions wt
+               LEFT JOIN marketplace_listings ml ON ml.listing_id = wt.listing_id
+               WHERE wt.user_id = %s
+               ORDER BY wt.created_at DESC
+               LIMIT 30''',
+            (session['user_id'],), fetchall=True
+        )
+        return render_template('stubs/activity.html', role=role, txns=txns)
+
+    entries = query(
+        '''SELECT log_id, table_name, operation, row_id, performed_by, performed_at, context
+           FROM audit_log
+           ORDER BY performed_at DESC
+           LIMIT 30''',
+        fetchall=True
+    )
+    return render_template('stubs/activity.html', role=role, entries=entries)
+
+
 @stubs_bp.route('/marketplace/new', methods=['GET'])
 @login_required(roles=['citizen'])
 def new_listing_form():

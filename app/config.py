@@ -10,5 +10,5 @@ class Config:
     DB_PORT = int(os.environ.get('DB_PORT', 5432))
     DB_NAME = os.environ.get('DB_NAME', 'pakrastah')
     DB_USER = os.environ.get('DB_USER', 'postgres')
-    DB_PASSWORD = os.environ.get('DB_PASSWORD', '')
+    DB_PASSWORD = os.environ.get('DB_PASSWORD')
     BACKUP_DIR = os.environ.get('BACKUP_DIR', './backups')

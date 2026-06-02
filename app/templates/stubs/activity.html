@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Activity{% endblock %}
+{% block page_subtitle %}Review recent activity across your account or the compliance portal.{% endblock %}
+{% block content %}
+<div class="space-y-8 max-w-6xl mx-auto">
+  <div class="rounded-3xl bg-white p-6 shadow-sm">
+    <h1 class="text-3xl font-semibold text-primary">Activity</h1>
+    <p class="mt-2 text-sm text-on-surface-variant">Recent events from your account and system records.</p>
+  </div>
+
+  {% if role == 'citizen' %}
+  <div class="rounded-3xl border border-outline bg-white overflow-hidden shadow-sm">
+    <div class="px-6 py-5 border-b border-surface-container flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-primary">Wallet activity</h2>
+      <span class="text-sm text-on-surface-variant">{{ txns|length }} records</span>
+    </div>
+    {% if txns %}
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-surface-container text-xs uppercase tracking-[0.18em] text-on-surface-variant">
+          <tr>
+            <th class="px-4 py-3 text-left">Date</th>
+            <th class="px-4 py-3 text-left">Description</th>
+            <th class="px-4 py-3 text-center">Type</th>
+            <th class="px-4 py-3 text-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-container-high">
+          {% for t in txns %}
+          <tr class="hover:bg-surface-container transition">
+            <td class="px-4 py-3 text-xs text-on-surface-variant whitespace-nowrap">{{ t.created_at.strftime('%d %b %Y, %H:%M') if t.created_at else '—' }}</td>
+            <td class="px-4 py-3 text-on-surface">{{ t.description }}</td>
+            <td class="px-4 py-3 text-center text-on-surface-variant">{{ t.txn_type|capitalize }}</td>
+            <td class="px-4 py-3 text-right font-semibold {% if t.amount > 0 %}text-emerald-600{% else %}text-red-600{% endif %}">{% if t.amount > 0 %}+{% endif %}{{ '{:,.2f}'.format(t.amount) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="px-6 py-10 text-center text-on-surface-variant">No activity records found.</div>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="rounded-3xl border border-outline bg-white overflow-hidden shadow-sm">
+    <div class="px-6 py-5 border-b border-surface-container flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-primary">System activity</h2>
+      <span class="text-sm text-on-surface-variant">{{ entries|length }} events</span>
+    </div>
+    {% if entries %}
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-surface-container text-xs uppercase tracking-[0.18em] text-on-surface-variant">
+          <tr>
+            <th class="px-4 py-3 text-left">Date</th>
+            <th class="px-4 py-3 text-left">Source</th>
+            <th class="px-4 py-3 text-left">Action</th>
+            <th class="px-4 py-3 text-left">Performed by</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-container-high">
+          {% for e in entries %}
+          <tr class="hover:bg-surface-container transition">
+            <td class="px-4 py-3 text-xs text-on-surface-variant whitespace-nowrap">{{ e.performed_at.strftime('%d %b %Y, %H:%M') if e.performed_at else '—' }}</td>
+            <td class="px-4 py-3 text-on-surface">{{ e.table_name }}</td>
+            <td class="px-4 py-3 text-on-surface-variant">{{ e.operation }}{% if e.row_id %} #{{ e.row_id }}{% endif %}</td>
+            <td class="px-4 py-3 text-on-surface">{{ e.performed_by or 'system' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="px-6 py-10 text-center text-on-surface-variant">No activity records available.</div>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
